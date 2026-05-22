@@ -1,11 +1,11 @@
-# Projekt FA, oceny sędziów USA
+# FA project, Factor Analysis
 install.packages("psych")
 install.packages("GPArotation")
 
 library(psych)
 library(GPArotation)
 
-# 1. Otwieramy dane
+# 1. loading data
 data("USJudgeRatings")
 df <- USJudgeRatings
 head(df)
@@ -14,56 +14,56 @@ str(df)
 summary(df)       
 # 43 sędziów, 12 ocen
 
-# 2. Sprawdzamy korelacje
+# 2. checking correlation
 R <- cor(df)
 R
 pairs(df, main="Wizualizacja korelacji ocen sędziów")
 #pokazuje powiązania między zmiennymi, niektóre zmienne są mocno ze sobą powiązane, a inne mniej
 
-# 3. Sprawdzamy zasadność analizy czynnikowej
-#kwadrat korelacji wielorakiej (SMC)
+# 3. checking the validity of FA
+#squared multiple correlations (SMC)
 smc <- smc(R) 
 smc
 
-#wyartość bliska 1 -> zmienna dobrze powiązana z innymi -> jest sens użyć FA
+# value close to 1 -> variable is well correlated with others -> we can go with FA
 # KMO
 KMO(R)
 
-# Test Bartletta
+# Bartlett's test
 cortest.bartlett(R, n = nrow(df))
 
-# 4. Określamy liczbę czynników
+# 4. Determine number of factors
 eig <- eigen(R)$values
 eig
 #Bierzemy czynniki z eigenvalue > 1, czyli pierwszy i drugi-> 2 czynniki
 
-# Wykres osypiska (scree plot)
+# scree plot
 plot(eig, type="b", main="Wykres osypiska",
      xlab="Numer czynnika", ylab="Wartość własna")
 abline(h=1, col="red", lty=2)
 
-# 5. Analiza czynnikowa
-#z rotacją
+# 5. Factor analysis
+#with rotation
 fa1 <- factanal(df, factors=2, rotation="none", scores="regression")
 fa1
-# bardzo silne korelacje pomiędzy zmiennymi dla ML
+# very strong correlations between variables for ML
 
-# próba na macierzy korelacji metodą ML z rotacją ortogonalną
+# Attempt on correlation matrix using ML method with orthogonal rotation
 fa2 <- factanal(covmat = R,
                 factors = 2,
                 n.obs = nrow(df),
                 rotation = "varimax")
 
 fa2
-#dane mają w praktyce strukturę bliską jednoczynnikowej
+#the data essentially has a structure close to one-factor
 
-#z 1 czynnikiem
+#With 1 factor
 fa3 <- factanal(covmat = R,
                 factors = 1,
                 n.obs = nrow(df))
 
 fa3
-#nawet dla 1 czynnika nie działa ze wzgledu na silną korelacje
+# Even with 1 factor it doesn't work due to strong correlations
 
 # 6.PAF
 fa_paf_2 <- fa(df,
@@ -73,14 +73,14 @@ fa_paf_2 <- fa(df,
 
 fa_paf_2
 
-#7. diagram czynnikowy
+#7. Factor diagram
 fa.diagram(fa_paf_2)
 
-# 8. wartości czynnikowe
+# 8. Factor scores
 scores_paf <- factor.scores(df, fa_paf_2)
 head(scores_paf$scores)
 
-# 9. Wizualizacja wyników PAF
+# 9. Visualization of PAF results
 par(mar = c(5, 5, 4, 2))
 plot(scores_paf$scores[,1], scores_paf$scores[,2],
      xlab = "Czynnik 1 (PAF)",
@@ -89,7 +89,7 @@ plot(scores_paf$scores[,1], scores_paf$scores[,2],
      pch = 19,
      col = "blue")
 
-# podpisy obserwacji
+# Observation labels
 text(scores_paf$scores[,1], scores_paf$scores[,2],
      labels = rownames(df),
      pos = 3,
