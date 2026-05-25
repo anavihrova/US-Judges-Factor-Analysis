@@ -12,13 +12,13 @@ head(df)
 dim(df)
 str(df)          
 summary(df)       
-# 43 sędziów, 12 ocen
+# 43 judges, 12 ratings
 
 # 2. checking correlation
 R <- cor(df)
 R
-pairs(df, main="Wizualizacja korelacji ocen sędziów")
-#pokazuje powiązania między zmiennymi, niektóre zmienne są mocno ze sobą powiązane, a inne mniej
+pairs(df, main="Visualization of correlation between judge ratings")
+#shows relationships between variables, some variables are strongly correlated, others less so
 
 # 3. checking the validity of FA
 #squared multiple correlations (SMC)
@@ -35,11 +35,11 @@ cortest.bartlett(R, n = nrow(df))
 # 4. Determine number of factors
 eig <- eigen(R)$values
 eig
-#Bierzemy czynniki z eigenvalue > 1, czyli pierwszy i drugi-> 2 czynniki
+#Take factors with eigenvalue > 1, so the first and second -> 2 factors
 
 # scree plot
-plot(eig, type="b", main="Wykres osypiska",
-     xlab="Numer czynnika", ylab="Wartość własna")
+plot(eig, type="b", main="Scree plot",
+     xlab="Factor number", ylab="Eigenvalue")
 abline(h=1, col="red", lty=2)
 
 # 5. Factor analysis
@@ -83,9 +83,9 @@ head(scores_paf$scores)
 # 9. Visualization of PAF results
 par(mar = c(5, 5, 4, 2))
 plot(scores_paf$scores[,1], scores_paf$scores[,2],
-     xlab = "Czynnik 1 (PAF)",
-     ylab = "Czynnik 2 (PAF)",
-     main = "Położenie sędziów w przestrzeni czynnikowej (PAF – 2 czynniki)",
+     xlab = "Factor 1 (PAF)",
+     ylab = "Factor 2 (PAF)",
+     main = "Judges' positions in factor space (PAF – 2 factors)",
      pch = 19,
      col = "blue")
 
